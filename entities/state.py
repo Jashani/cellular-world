@@ -11,7 +11,6 @@ RAIN_CLOUD_DENSITY_REDUCTION_RATE = 1
 
 @dataclasses.dataclass
 class State:
-    height: int
     temperature: int
     pollution: int
     cloud_density: int
