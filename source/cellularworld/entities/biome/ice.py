@@ -1,10 +1,10 @@
-import base
-import biome_type
+from cellularworld.entities.biome import base, biome_type
+
 
 TEMPERATURE_EFFECT_ON_ICE_WEIGHT = 1
 
 
-class Ice(base):
+class Ice(base.Base):
     def __init__(self, cell):
         super().__init__(cell)
         self._density = 0  # Default?

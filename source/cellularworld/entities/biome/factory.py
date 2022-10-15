@@ -1,5 +1,4 @@
-import biome_type
-import city, forest, ice, sea, land
+from cellularworld.entities.biome import biome_type, city, forest, ice, sea, land
 
 
 def new(biome, cell):
