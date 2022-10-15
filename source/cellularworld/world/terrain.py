@@ -1,5 +1,4 @@
-import perlin_noise
-from cellularworld.world import matrix
+from cellularworld.world import matrix, noise
 
 MAX_HEIGHT = 16
 HEIGHT_RANGE = (0, MAX_HEIGHT)
@@ -37,19 +36,12 @@ class Terrain:
 
     def _create(self, terrain, seed):
         width, height = SIZE, SIZE
-        noise = perlin_noise.PerlinNoise(octaves=LAND_HARSHNESS, seed=seed)
-        noise_map = [[noise([row/width, column/height]) for column in range(width)] for row in range(height)]
-        noise_range = self._noise_range(noise_map)
+        noise_map = noise.Noise.generate(LAND_HARSHNESS, seed, width, height)
+        noise_range = noise.Noise.range(noise_map)
         for row in range(height):
             for column in range(width):
                 point_value = noise_map[row][column]
                 terrain[row][column] = self._linear_interpolation(*noise_range, *HEIGHT_RANGE, point_value)
-
-    def _noise_range(self, noise_map):
-        heights = sum(noise_map, [])
-        lowest = min(heights)
-        highest = max(heights)
-        return lowest, highest
 
     def _neighbourhood_average(self, terrain, row, column):
         average = terrain[row][column]
