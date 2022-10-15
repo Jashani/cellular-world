@@ -11,9 +11,9 @@ RAIN_CLOUD_DENSITY_REDUCTION_RATE = 1
 
 @dataclasses.dataclass
 class State:
-    temperature: int
-    pollution: int
-    cloud_density: int
+    temperature: int = 0
+    pollution: int = 0
+    cloud_density: int = 0
 
     def is_raining(self):
         rain_threshold = BASE_RAIN_THRESHOLD + max(0, self.temperature * TEMPERATURE_EFFECT_ON_RAIN_FACTOR_WEIGHT)

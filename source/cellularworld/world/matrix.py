@@ -4,8 +4,8 @@ NULL_CHARACTER = 'X'
 
 class Matrix:
     def __init__(self, width, height):
-        self._width = width
-        self._height = height
+        self.width = width
+        self.height = height
         self._matrix = []
         for row in range(height):
             self._matrix.append([NULL_CHARACTER] * width)
@@ -25,10 +25,10 @@ class Matrix:
         raise Exception("Please don't access rows directly :(")
 
     def neighbour_coordinates(self, row, column):
-        upper_row = (row - 1) % self._height
-        bottom_row = (row + 1) % self._height
-        left_column = (column - 1) % self._width
-        right_column = (column + 1) % self._width
+        upper_row = (row - 1) % self.height
+        bottom_row = (row + 1) % self.height
+        left_column = (column - 1) % self.width
+        right_column = (column + 1) % self.width
         neighbours = [(upper_row, left_column), (upper_row, column), (upper_row, right_column),
                       (row, left_column), (row, right_column),
                       (bottom_row, left_column), (bottom_row, column), (bottom_row, right_column)]
