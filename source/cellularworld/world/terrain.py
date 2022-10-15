@@ -1,6 +1,6 @@
 import math
 import random
-import matrix
+from cellularworld.world import matrix
 
 MAX_HEIGHT = 16
 CHOICE_RANGE = 2**MAX_HEIGHT
