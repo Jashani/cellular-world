@@ -9,6 +9,10 @@ class Ice(base.Base):
         super().__init__(cell)
         self._density = 0  # Default?
 
+    @property
+    def type(self):
+        return biome_type.BiomeType.ICE
+
     def do_cycle(self):
         self.cell.temperature -= 1  # ICE_EFFECT_ON_TEMPERATURE_WEIGHT
         if self.cell.temperature > 0:
