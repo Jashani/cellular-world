@@ -1,18 +1,21 @@
-import math
-import random
+import perlin_noise
 from cellularworld.world import matrix
 
 MAX_HEIGHT = 16
-CHOICE_RANGE = 2**MAX_HEIGHT
+HEIGHT_RANGE = (0, MAX_HEIGHT)
+EDGE_THICKNESS = 2
+LAND_HARSHNESS = 4
+SMOOTHING_ITERATIONS = 3
 
-SIZE = 40
+SIZE = 35
 
 
 class Terrain:
-    def generate(self):
+    def generate(self, seed):
         terrain = matrix.Matrix(SIZE, SIZE)
-        self._randomise(terrain)
-        self._smooth(terrain)
+        self._create(terrain, seed)
+        for iteration in range(SMOOTHING_ITERATIONS):
+            self._smooth_edges(terrain)
         self._descretify(terrain)
         return terrain
 
@@ -21,25 +24,46 @@ class Terrain:
             for column in range(SIZE):
                 terrain[row][column] = round(terrain[row][column])
 
-    def _smooth(self, terrain):
-        for row in range(SIZE):
-            for column in range(SIZE):
-                terrain[row][column] = self._neighbourhood_average(terrain, row, column)
+    def _smooth_edges(self, terrain):
+        for edge in self._edges(SIZE):
+            for point in range(SIZE):
+                row, column = edge, point
+                self._smooth(column, row, terrain)
+                row, column = point, edge
+                self._smooth(column, row, terrain)
 
-    def _randomise(self, terrain):
-        for row in range(SIZE):
-            for column in range(SIZE):
-                terrain[row][column] = self._generate_height()
+    def _smooth(self, column, row, terrain):
+        terrain[row][column] = self._neighbourhood_average(terrain, row, column)
+
+    def _create(self, terrain, seed):
+        width, height = SIZE, SIZE
+        noise = perlin_noise.PerlinNoise(octaves=LAND_HARSHNESS, seed=seed)
+        noise_map = [[noise([row/width, column/height]) for column in range(width)] for row in range(height)]
+        noise_range = self._noise_range(noise_map)
+        for row in range(height):
+            for column in range(width):
+                point_value = noise_map[row][column]
+                terrain[row][column] = self._linear_interpolation(*noise_range, *HEIGHT_RANGE, point_value)
+
+    def _noise_range(self, noise_map):
+        heights = sum(noise_map, [])
+        lowest = min(heights)
+        highest = max(heights)
+        return lowest, highest
 
     def _neighbourhood_average(self, terrain, row, column):
         average = terrain[row][column]
         neighbour_coordinates = terrain.neighbour_coordinates(row, column)
         for neighbour_row, neighbour_column in neighbour_coordinates:
             average += terrain[neighbour_row][neighbour_column]
-        average /= len(neighbour_coordinates)
+        average /= len(neighbour_coordinates) + 1
         return average
 
-    def _generate_height(self):
-        randomised_height = random.randint(1, CHOICE_RANGE)
-        normalised_height = 16 - math.floor(math.log2(randomised_height))
-        return normalised_height
+    def _linear_interpolation(self, from_start, from_end, to_start, to_end, value):
+        result = to_start + ((to_end - to_start) / (from_end - from_start)) * (value - from_start)
+        return result
+
+    def _edges(self, size):
+        full_range = list(range(size))
+        edges = full_range[:EDGE_THICKNESS] + full_range[-EDGE_THICKNESS:]
+        return edges

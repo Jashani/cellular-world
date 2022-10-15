@@ -3,7 +3,8 @@ from setuptools import setup, find_packages
 README = 'Cellular World'
 
 requires = ['numpy',
-            'dataclasses']
+            'dataclasses',
+            'perlin_noise']
 
 
 def packages(namespace, dir):
