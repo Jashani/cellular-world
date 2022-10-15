@@ -3,15 +3,27 @@ NULL_CHARACTER = 'X'
 
 
 class Matrix:
-    def __init__(self, width, height):
+    def __init__(self, width: int, height: int):
         self.width = width
         self.height = height
         self._matrix = []
         for row in range(height):
             self._matrix.append([NULL_CHARACTER] * width)
 
+    @classmethod
+    def from_pythonic(cls, matrix):
+        height = len(matrix)
+        width = len(matrix[0])
+        if any([row for row in matrix if len(row) != width]):
+            raise Exception(f"Creating matrix from non-matrix: {matrix}")
+        new_matrix = cls(width, height)
+        for row in range(height):
+            for column in range(width):
+                new_matrix[row][column] = matrix[row][column]
+        return new_matrix
+
     def __iter__(self):
-        return self._matrix
+        return iter(self._matrix)
 
     def __getitem__(self, row):
         if type(row) is not int:
