@@ -1,3 +1,4 @@
+import copy
 from cellularworld.entities import state, wind
 from cellularworld.entities.biome import factory as biome_factory
 

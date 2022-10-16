@@ -1,4 +1,5 @@
 from cellularworld.entities.biome import base, biome_type
+import copy
 
 
 TEMPERATURE_EFFECT_ON_ICE_WEIGHT = 1
