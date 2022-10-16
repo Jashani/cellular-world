@@ -38,28 +38,17 @@ class Terrain:
     def _smooth_edges(self, height_map):
         for row in self._edges(height_map.height):
             for column in range(height_map.width):
-                self._smooth(row, column, height_map)
+                height_map.smooth(row, column)
 
         for column in self._edges(height_map.width):
             for row in range(height_map.height):
-                self._smooth(row, column, height_map)
-
-    def _smooth(self, row, column, height_map):
-        height_map[row][column] = self._neighbourhood_average(height_map, row, column)
+                height_map.smooth(row, column)
 
     def _biome(self, height):
         UNDA_DA_SEA = height <= WATER_LEVEL
         if UNDA_DA_SEA:
             return biome_type.BiomeType.SEA
         return biome_type.BiomeType.LAND
-
-    def _neighbourhood_average(self, height_map, row, column):
-        average = height_map[row][column]
-        neighbour_coordinates = height_map.neighbour_coordinates(row, column)
-        for neighbour_row, neighbour_column in neighbour_coordinates:
-            average += height_map[neighbour_row][neighbour_column]
-        average /= len(neighbour_coordinates) + 1
-        return average
 
     def _edges(self, size):
         full_range = list(range(size))

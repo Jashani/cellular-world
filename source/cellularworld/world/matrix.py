@@ -45,3 +45,16 @@ class Matrix:
                       (row, left_column), (row, right_column),
                       (bottom_row, left_column), (bottom_row, column), (bottom_row, right_column)]
         return neighbours
+
+    def _neighbourhood_average(self, row, column):
+        if type(self[row][column]) not in (int, float):
+            raise Exception('Only numbers can be averaged :(')
+        average = self[row][column]
+        neighbour_coordinates = self.neighbour_coordinates(row, column)
+        for neighbour_row, neighbour_column in neighbour_coordinates:
+            average += self[neighbour_row][neighbour_column]
+        average /= len(neighbour_coordinates) + 1
+        return average
+
+    def smooth(self, row, column):
+        self[row][column] = self._neighbourhood_average(row, column)
