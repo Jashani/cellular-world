@@ -23,12 +23,23 @@ class Terrain:
     
     def _generate_cells(self, height_map):
         terrain = matrix.Matrix(SIZE, SIZE)
+        self._create_cells(height_map, terrain)
+        self._set_neighbours(height_map, terrain)
+        return terrain
+
+    def _set_neighbours(self, height_map, terrain):
+        for row in range(height_map.height):
+            for column in range(height_map.width):
+                neighbours = [terrain[neighbour_row][neighbour_column] for neighbour_row, neighbour_column in
+                              terrain.neighbour_coordinates(row, column)]
+                terrain[row][column].neighbours = neighbours
+
+    def _create_cells(self, height_map, terrain):
         for row in range(height_map.height):
             for column in range(height_map.width):
                 height = height_map[row][column]
                 biome = self._biome(height)
                 terrain[row][column] = cell.Cell(biome, height)
-        return terrain
 
     def _descretify(self, height_map):
         for row in range(height_map.height):
