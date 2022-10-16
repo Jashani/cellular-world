@@ -14,8 +14,8 @@ class Ice(base.Base):
         return biome_type.BiomeType.ICE
 
     def do_cycle(self):
-        self.cell.temperature -= 1  # ICE_EFFECT_ON_TEMPERATURE_WEIGHT
-        if self.cell.temperature > 0:
+        self.cell.state.temperature -= 1  # ICE_EFFECT_ON_TEMPERATURE_WEIGHT
+        if self.cell.state.temperature > 0:
             self._warm_up()
         else:
             self._cool_down()
@@ -24,12 +24,12 @@ class Ice(base.Base):
 
     def _warm_up(self):
         neighbouring_icebergs = self._neighbouring_icebergs_count()
-        self._density -= self.cell.temperature * TEMPERATURE_EFFECT_ON_ICE_WEIGHT * (1/(neighbouring_icebergs + 1)) # Multicell but only counting
+        self._density -= self.cell.state.temperature * TEMPERATURE_EFFECT_ON_ICE_WEIGHT * (1/(neighbouring_icebergs + 1)) # Multicell but only counting
 
     def _cool_down(self):
         neighbouring_icebergs = self._neighbouring_icebergs_count()
-        self._density += self.cell.temperature * TEMPERATURE_EFFECT_ON_ICE_WEIGHT * (1 - (1/(neighbouring_icebergs + 1))) # Multicell but only counting
+        self._density += self.cell.state.temperature * TEMPERATURE_EFFECT_ON_ICE_WEIGHT * (1 - (1/(neighbouring_icebergs + 1))) # Multicell but only counting
 
     def _neighbouring_icebergs_count(self):
-        count = len([neighbour for neighbour in self.cell.neighbours() if type(neighbour.biome) == type(self)])
+        count = len([neighbour for neighbour in self.cell.neighbours if type(neighbour.biome) == type(self)])
         return count
