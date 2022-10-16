@@ -13,3 +13,14 @@ class Base(abc.ABC):
     @abc.abstractmethod
     def do_cycle(self):
         pass
+
+    def commit(self):
+        pass
+
+    def __copy__(self):
+        cls = self.__class__
+        result = cls(self.cell)
+        return result
+
+    def __deepcopy__(self, memo):
+        return self.__copy__()
