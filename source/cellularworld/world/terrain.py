@@ -48,7 +48,8 @@ class Terrain:
         height_map[row][column] = self._neighbourhood_average(height_map, row, column)
 
     def _biome(self, height):
-        if height <= WATER_LEVEL:
+        UNDA_DA_SEA = height <= WATER_LEVEL
+        if UNDA_DA_SEA:
             return biome_type.BiomeType.SEA
         return biome_type.BiomeType.LAND
 
