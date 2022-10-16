@@ -44,9 +44,8 @@ class Matrix:
         bottom_row = (row + 1) % self.height
         left_column = (column - 1) % self.width
         right_column = (column + 1) % self.width
-        neighbours = [(upper_row, left_column), (upper_row, column), (upper_row, right_column),
-                      (row, left_column), (row, right_column),
-                      (bottom_row, left_column), (bottom_row, column), (bottom_row, right_column)]
+        neighbours = [(row, left_column), (bottom_row, left_column), (bottom_row, column), (bottom_row, right_column),
+                      (row, right_column), (upper_row, right_column), (upper_row, column), (upper_row, left_column)]
         return neighbours
 
     def _neighbourhood_average(self, row, column):
