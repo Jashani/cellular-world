@@ -36,6 +36,9 @@ class Matrix:
     def __setitem__(self, key, value):
         raise Exception("Please don't access rows directly :(")
 
+    def smooth(self, row, column):
+        self[row][column] = self._neighbourhood_average(row, column)
+
     def neighbour_coordinates(self, row, column):
         upper_row = (row - 1) % self.height
         bottom_row = (row + 1) % self.height
@@ -55,6 +58,3 @@ class Matrix:
             average += self[neighbour_row][neighbour_column]
         average /= len(neighbour_coordinates) + 1
         return average
-
-    def smooth(self, row, column):
-        self[row][column] = self._neighbourhood_average(row, column)

@@ -7,6 +7,9 @@ TEMPERATURE_EFFECT_ON_RAIN_FACTOR_WEIGHT = 5
 RAIN_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT = 1
 RAIN_EFFECT_ON_POLLUTION_FACTOR_WEIGHT = 1
 RAIN_CLOUD_DENSITY_REDUCTION_RATE = 1
+TEMPERATURE_EFFECT_ON_POLLUTION_FACTOR_WEIGHT = 0.1
+POLLUTION_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT = 0.1
+CLOUD_DENSITY_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT = 0.1
 
 
 @dataclasses.dataclass
@@ -20,6 +23,9 @@ class State:
         return self.cloud_density >= rain_threshold
 
     def do_cycle(self):
+        self.pollution += self.temperature * TEMPERATURE_EFFECT_ON_POLLUTION_FACTOR_WEIGHT
+        self.temperature += self.pollution * POLLUTION_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT
+        self.temperature -= self.cloud_density * CLOUD_DENSITY_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT
         if not self.is_raining():
             return
         self.temperature -= RAIN_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT
