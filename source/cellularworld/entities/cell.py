@@ -19,6 +19,7 @@ class Cell:
         self.future_biome = biome_factory.new(biome_type, self)
 
     def do_cycle(self):
+        self.pollution_dissipation()
         self.future_biome.do_cycle()
         self.future_state.do_cycle()
         self.future_wind.do_cycle()
@@ -31,3 +32,7 @@ class Cell:
         self.wind = copy.deepcopy(self.future_wind)
         self.state.validate_values()
 
+    def pollution_dissipation(self):
+        self.future_state.pollution = self.future_state.pollution / 9
+        for neighbour in self.neighbours:
+            self.future_state.pollution += neighbour.state.pollution / 9
