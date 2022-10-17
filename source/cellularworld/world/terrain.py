@@ -1,20 +1,17 @@
 from cellularworld.entities.biome import biome_type
 from cellularworld.world import matrix, noise
 from cellularworld.entities import cell
+from cellularworld.config import config
 
-MAX_HEIGHT = 16
-HEIGHT_RANGE = (0, MAX_HEIGHT)
 EDGE_THICKNESS = 2
-LAND_HARSHNESS = 4
 SMOOTHING_ITERATIONS = 3
-WATER_LEVEL = 9
-SIZE = 35
 
 
 class Terrain:
     def generate(self, seed):
-        height, width = SIZE, SIZE
-        height_map = noise.Noise.generate(LAND_HARSHNESS, seed, width, height, *HEIGHT_RANGE)
+        HEIGHT_RANGE = (0, config.world.terrain.max_height)
+        height, width = config.world.terrain.size, config.world.terrain.size
+        height_map = noise.Noise.generate(config.world.terrain.harshness, seed, width, height, *HEIGHT_RANGE)
         for iteration in range(SMOOTHING_ITERATIONS):
             self._smooth_edges(height_map)
         self._descretify(height_map)
@@ -22,7 +19,7 @@ class Terrain:
         return terrain
     
     def _generate_cells(self, height_map):
-        terrain = matrix.Matrix(SIZE, SIZE)
+        terrain = matrix.Matrix(config.world.terrain.size, config.world.terrain.size)
         self._create_cells(height_map, terrain)
         self._set_neighbours(height_map, terrain)
         return terrain
@@ -56,7 +53,7 @@ class Terrain:
                 height_map.smooth(row, column)
 
     def _biome(self, height):
-        UNDA_DA_SEA = height <= WATER_LEVEL
+        UNDA_DA_SEA = height <= config.world.terrain.water_level
         if UNDA_DA_SEA:
             return biome_type.BiomeType.SEA
         return biome_type.BiomeType.LAND

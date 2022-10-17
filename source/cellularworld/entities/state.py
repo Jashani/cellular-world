@@ -1,37 +1,32 @@
+from cellularworld.config import config
 import dataclasses
-
-
-BASE_RAIN_THRESHOLD = 5
-TEMPERATURE_EFFECT_ON_RAIN_FACTOR_WEIGHT = 1
-RAIN_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT = 1
-RAIN_EFFECT_ON_POLLUTION_FACTOR_WEIGHT = 1
-RAIN_CLOUD_DENSITY_REDUCTION_RATE = 1
-TEMPERATURE_EFFECT_ON_POLLUTION_FACTOR_WEIGHT = 0.1
-POLLUTION_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT = 0.1
-CLOUD_DENSITY_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT = 0.1
-MAX_CLOUD_EFFECT_ON_TEMPERATURE = 0.5
-SUN_EFFECT = 0.1
 
 
 @dataclasses.dataclass
 class State:
-    temperature: int = 1
+    temperature: int = 0
     pollution: int = 0
-    cloud_density: int = 1
+    cloud_density: int = 0
+
+    def __post_init__(self):
+        self.temperature = config.world.start.temperature
+        self.pollution = config.world.start.pollution
+        self.cloud_density = config.world.start.clouds
 
     def is_raining(self):
-        rain_threshold = BASE_RAIN_THRESHOLD + max(0, self.temperature * TEMPERATURE_EFFECT_ON_RAIN_FACTOR_WEIGHT)
+        rain_threshold = config.thresholds.elements.rain.base + max(0, self.temperature * config.effects.elements.heat.on.rain)
         return self.cloud_density >= rain_threshold
 
     def do_cycle(self):
-        self.temperature += SUN_EFFECT / max(1, self.cloud_density)
-        self.pollution += self.temperature * TEMPERATURE_EFFECT_ON_POLLUTION_FACTOR_WEIGHT
-        self.temperature += self.pollution * POLLUTION_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT
+        cloud_blockage = max(1, self.cloud_density * config.effects.elements.clouds.on.sun)
+        self.temperature += config.effects.elements.sun.on.heat / cloud_blockage
+        self.pollution += self.temperature * config.effects.elements.heat.on.pollution
+        self.temperature += self.pollution * config.effects.elements.pollution.on.heat
         if not self.is_raining():
             return
-        self.temperature -= RAIN_EFFECT_ON_TEMPERATURE_FACTOR_WEIGHT
-        self.pollution -= RAIN_EFFECT_ON_POLLUTION_FACTOR_WEIGHT
-        self.cloud_density -= RAIN_CLOUD_DENSITY_REDUCTION_RATE
+        self.temperature -= config.effects.elements.rain.on.heat
+        self.pollution -= config.effects.elements.rain.on.pollution
+        self.cloud_density -= config.effects.elements.rain.on.cloud_reduction
 
     def validate_values(self):
         self.cloud_density = max(0, self.cloud_density)

@@ -1,7 +1,5 @@
 from cellularworld.entities.biome import base, biome_type
-
-
-FOREST_POLLUTION_EFFECT = 0.3
+from cellularworld.config import config
 
 
 class Forest(base.Base):
@@ -10,4 +8,4 @@ class Forest(base.Base):
         return biome_type.BiomeType.FOREST
 
     def do_cycle(self):
-        self.cell.future_state.pollution -= FOREST_POLLUTION_EFFECT
+        self.cell.future_state.pollution -= config.effects.biomes.forest.on.pollution
