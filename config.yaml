@@ -13,7 +13,7 @@ effects:
         pollution: 1
     heat:
       "on":
-        ice: -1
+        ice: 0.4
         rain: 0.1
         pollution: 0.01
         cloud_creation: 0.1
@@ -36,7 +36,7 @@ effects:
   biomes:
     ice:
       "on":
-        heat: 2
+        heat: 2.5
     city:
       "on":
         pollution: 9
