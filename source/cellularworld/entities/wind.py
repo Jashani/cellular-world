@@ -1,6 +1,7 @@
 import math
 import numpy
 import copy
+from cellularworld.entities import vector_tools
 from cellularworld.config import config
 import random
 
@@ -30,13 +31,7 @@ class Wind:
         return self._strength
 
     def strength_magnitude(self):
-        return numpy.linalg.norm(self._strength)
-
-    def unit_vector(self, vector):
-        magnitude = numpy.linalg.norm(vector)
-        if magnitude == 0:
-            return numpy.array([0., 0.])
-        return vector / magnitude
+        return vector_tools.magnitude(self._strength)
 
     def do_cycle(self):
         self._blow_things_away()
@@ -63,28 +58,31 @@ class Wind:
             self.affect_wind(dissipation_factor, neighbour, neighbour_effect, unit_vector)
             self.affect_elements(dissipation_factor, neighbour, neighbour_effect_magnitude)
 
-    def wind_heat_interactions(self, neighbour, unit_vector):
+    def wind_heat_interactions(self, neighbour, towards_me):
         temperature_difference = neighbour.state.temperature - self._cell.state.temperature
         I_AM_HOTTER = temperature_difference < 0
         if I_AM_HOTTER:
-            self.future_strength += unit_vector * (abs(temperature_difference) * config.effects.elements.heat.on.wind)
+            self.future_strength += towards_me * (abs(temperature_difference) * config.effects.elements.heat.on.wind)
         else:
-            self.future_strength -= unit_vector * (temperature_difference * config.effects.elements.heat.on.wind)
+            self.future_strength -= towards_me * (temperature_difference * config.effects.elements.heat.on.wind)
 
-    def affect_wind(self, dissipation_factor, neighbour, neighbour_effect, unit_vector):
+    def affect_wind(self, dissipation_factor, neighbour, neighbour_effect, towards_me):
         self.future_strength += neighbour_effect
-        if neighbour.height > config.world.terrain.water_level or self._cell.height > config.world.terrain.water_level:
-            self.future_strength += unit_vector * ((neighbour.height - self._cell.height) * config.effects.elements.height.on.wind) * dissipation_factor
+        if neighbour.height > self._cell.height:
+            self.future_strength += towards_me * ((neighbour.height - self._cell.height) * config.effects.elements.height.on.wind) * dissipation_factor
 
     def affect_elements(self, dissipation_factor, neighbour, neighbour_effect_magnitude):
-        cooling_amount = (neighbour.state.temperature - self._cell.state.temperature) * neighbour_effect_magnitude
-        self._cell.future_state.temperature += cooling_amount * dissipation_factor * config.effects.elements.wind.on.heat
-        self._cell.future_state.pollution += neighbour_effect_magnitude * neighbour.state.pollution * dissipation_factor * config.effects.elements.wind.on.pollution
-        self._cell.future_state.cloud_density += neighbour_effect_magnitude * neighbour.state.cloud_density * dissipation_factor * config.effects.elements.wind.on.clouds
+        temperature_difference = neighbour.state.temperature - self._cell.state.temperature
+        temperature_effect = temperature_difference * neighbour_effect_magnitude * config.effects.elements.wind.on.heat
+        pollution_effect = neighbour_effect_magnitude * neighbour.state.pollution * config.effects.elements.wind.on.pollution
+        cloud_effect = neighbour_effect_magnitude * neighbour.state.cloud_density * config.effects.elements.wind.on.clouds
+        self._cell.future_state.temperature += min(temperature_difference, temperature_effect) * dissipation_factor
+        self._cell.future_state.pollution += min(pollution_effect, neighbour.state.pollution) * dissipation_factor
+        self._cell.future_state.cloud_density += min(cloud_effect, neighbour.state.cloud_density) * dissipation_factor
 
     def _neighbour_effect(self, neighbour_index, wind):
         my_relative_direction = neighbour_index * RELATIVE_DIRECTION_ANGLE_FACTOR
-        my_dissipation_factor = self._dissipation_factor(my_relative_direction, wind.direction)
+        my_dissipation_factor = self._dissipation_factor(my_relative_direction, wind.direction_angle)
         if my_dissipation_factor == 0:
             return 0, 0
         normalised_dissipation_factor = self._my_normalised_dissipation_factor(my_dissipation_factor, my_relative_direction, wind)
@@ -94,8 +92,8 @@ class Wind:
     def _my_normalised_dissipation_factor(self, my_dissipation_factor, my_relative_direction, wind):
         left_neighbour_relative_direction = (my_relative_direction + RELATIVE_DIRECTION_ANGLE_FACTOR)
         right_neighbour_relative_direction = (my_relative_direction - RELATIVE_DIRECTION_ANGLE_FACTOR)
-        left_neighbour_dissipation_factor = self._dissipation_factor(left_neighbour_relative_direction, wind.direction)
-        right_neighbour_dissipation_factor = self._dissipation_factor(right_neighbour_relative_direction, wind.direction)
+        left_neighbour_dissipation_factor = self._dissipation_factor(left_neighbour_relative_direction, wind.direction_angle)
+        right_neighbour_dissipation_factor = self._dissipation_factor(right_neighbour_relative_direction, wind.direction_angle)
         factor_sum = my_dissipation_factor + left_neighbour_dissipation_factor + right_neighbour_dissipation_factor
         normalised_dissipation_factor = my_dissipation_factor / factor_sum
         return normalised_dissipation_factor
@@ -107,13 +105,13 @@ class Wind:
         return dissipation_factor
 
     @property
-    def direction(self):
-        if all(self.strength == 0):
-            return 0
-        normalised_strength = self.unit_vector(self.strength)
-        dot_product = numpy.dot(normalised_strength, ZERO_DIRECTION)
-        radians = numpy.arccos(dot_product)
-        degrees = numpy.rad2deg(radians)
-        if normalised_strength[1] < 0:
-            degrees += 180
-        return degrees
+    def direction_angle(self):
+        return vector_tools.direction_angle(self.strength)
+
+    def _my_relative_direction(self, neighbour_index):
+        return neighbour_index * RELATIVE_DIRECTION_ANGLE_FACTOR
+
+    def _towards_me(self, neighbour_index):
+        my_relative_direction = self._my_relative_direction(neighbour_index)
+        direction_vector = vector_tools.direction_vector(my_relative_direction)
+        return direction_vector
