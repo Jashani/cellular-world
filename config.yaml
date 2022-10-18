@@ -43,6 +43,10 @@ effects:
     forest:
       "on":
         pollution: 0.3
+    sea:
+      "on":
+        heat: 1
+        pollution: 0.5
 thresholds:
   elements:
     rain:
