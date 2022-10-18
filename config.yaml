@@ -56,7 +56,11 @@ thresholds:
       freezing: -5
 world:
   start:
-    temperature: 1
+    sea:
+      temperature: 20
+    ice:
+      temperature: -30
+    temperature: 16
     pollution: 0
     clouds: 1
   terrain:
