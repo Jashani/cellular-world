@@ -27,4 +27,4 @@ class Landform:
             for column in range(biome_map.width):
                 if terrain[row][column].biome.type == conditional_biome and biome_map[row][column] >= threshold:
                     terrain[row][column].set_biome(new_biome_type)
-
+                    terrain[row][column].set_temperature()

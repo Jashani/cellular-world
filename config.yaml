@@ -2,7 +2,7 @@ effects:
   elements:
     sun:
       "on":
-        heat: 0.1
+        heat: 1.5
     wind:
       travel_dissipation: 0.9
       dissipation_cone: 135
@@ -15,7 +15,7 @@ effects:
       "on":
         ice: -1
         rain: 0.1
-        pollution: 0.1
+        pollution: 0.01
         cloud_creation: 0.1
         wind: 0.1
     rain:
@@ -32,14 +32,14 @@ effects:
         heat: 0.1
     pollution:
       "on":
-        heat: 0.1
+        heat: 0.01
   biomes:
     ice:
       "on":
-        heat: 1
+        heat: 2
     city:
       "on":
-        pollution: 2
+        pollution: 9
     forest:
       "on":
         pollution: 0.3
@@ -55,6 +55,9 @@ thresholds:
     sea:
       freezing: -5
 world:
+  seed: 3 # Leave empty for random seed
+  speed: 10 # How frequently cycles are executed
+  days: 365
   start:
     sea:
       temperature: 20
@@ -67,11 +70,11 @@ world:
     max_height: 16
     harshness: 4 # Higher -> more archipelago-like land. Lower -> fewer, bigger continents
     water_level: 9
-    size: 35 # map size is size^2
+    size: 20 # map size is size^2
   biomes:
     city:
       spread: 12  # Higher -> more of the biome will show around.
-      threshold: 11  # Higher -> smaller, less connected biomes. max height = no biome at all.
+      threshold: 10  # Higher -> smaller, less connected biomes. max height = no biome at all.
     forest:
       spread: 6
       threshold: 8
