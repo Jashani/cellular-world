@@ -19,9 +19,10 @@ class State:
 
     def do_cycle(self):
         cloud_blockage = max(1, self.cloud_density * config.effects.elements.clouds.on.sun)
+        temperature, pollution = self.temperature, self.pollution
         self.temperature += config.effects.elements.sun.on.heat / cloud_blockage
-        self.pollution += self.temperature * config.effects.elements.heat.on.pollution
-        self.temperature += self.pollution * config.effects.elements.pollution.on.heat
+        self.temperature += pollution * config.effects.elements.pollution.on.heat
+        self.pollution += temperature * config.effects.elements.heat.on.pollution
         if not self.is_raining():
             return
         self.temperature -= config.effects.elements.rain.on.heat

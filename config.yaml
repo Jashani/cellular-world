@@ -5,7 +5,7 @@ effects:
         heat: 1.5
     wind:
       travel_dissipation: 0.9
-      dissipation_cone: 135
+      dissipation_cone: 90
       dissipation_limiter: 2
       "on":
         heat: 0.01
@@ -39,7 +39,7 @@ effects:
         heat: 2.5
     city:
       "on":
-        pollution: 9
+        pollution: 7
     forest:
       "on":
         pollution: 0.3
