@@ -27,7 +27,7 @@ class State:
             return
         self.temperature -= config.effects.elements.rain.on.heat
         self.pollution -= config.effects.elements.rain.on.pollution
-        self.cloud_density -= config.effects.elements.rain.on.cloud_reduction
+        self.cloud_density -= config.effects.elements.rain.on.cloud_reduction * (self.cloud_density / config.effects.elements.rain.on.cloud_reduction)
 
     def validate_values(self):
         self.cloud_density = max(0, self.cloud_density)
