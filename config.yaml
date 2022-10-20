@@ -16,13 +16,13 @@ effects:
         ice: 0.4
         rain: 0.1
         pollution: 0.01
-        cloud_creation: 0.1
+        cloud_creation: 0.5
         wind: 0.1
     rain:
       "on":
-        heat: 0.5
+        heat: 1
         pollution: 1
-        cloud_reduction: 1
+        cloud_reduction: 3
     clouds:
       "on":
         sun: 1
@@ -36,17 +36,17 @@ effects:
   biomes:
     ice:
       "on":
-        heat: 2.5
+        heat: 4
     city:
       "on":
-        pollution: 7
+        pollution: 9
     forest:
       "on":
-        pollution: 0.3
+        pollution: 0.5
     sea:
       "on":
-        heat: 1
-        pollution: 0.5
+        heat: 1.2
+        pollution: 0.6
 thresholds:
   elements:
     rain:
@@ -60,11 +60,11 @@ world:
   days: 365
   start:
     sea:
-      temperature: 20
+      temperature: 6
     ice:
-      temperature: -30
-    temperature: 16
-    pollution: 0
+      temperature: -6
+    temperature: 6
+    pollution: 1.5
     clouds: 1
   terrain:
     max_height: 16
