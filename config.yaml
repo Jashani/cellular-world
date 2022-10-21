@@ -56,16 +56,16 @@ thresholds:
       freezing: -5
 world:
   seed: 3 # Leave empty for random seed
-  speed: 10 # How frequently cycles are executed
   days: 365
+  stabilisation_period: 150 # Amount of days we let the world stabilise before starting the year
   start:
     sea:
       temperature: 6
     ice:
       temperature: -6
     temperature: 6
-    pollution: 1.5
-    clouds: 1
+    pollution: 5
+    clouds: 2.5
   terrain:
     max_height: 16
     harshness: 4 # Higher -> more archipelago-like land. Lower -> fewer, bigger continents
