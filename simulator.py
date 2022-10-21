@@ -132,17 +132,39 @@ class Simulator:
         return averages
 
     def _create_plot(self, stabilisation_period):
-        days = [day + 1 - stabilisation_period for day in range(config.world.days + stabilisation_period)]
-        plt.plot(days, self._data.temperature, label='Temperature')
-        plt.plot(days, self._data.pollution, label='Pollution')
-        plt.plot(days, self._data.cloud_density, label='Cloud Density')
-        plt.plot(days, self._data.wind, label='Wind Magnitude')
-        plt.axvline(x=0, color='r', label='End of stabilisation period')
-        plt.xlabel('Day')
-        plt.ylabel('Value')
         plt.title(f'City effect on pollution: {config.effects.biomes.city.on.pollution}')
+        days = [day + 1 - stabilisation_period for day in range(config.world.days + stabilisation_period)]
+        figure, (values, standard) = plt.subplots(2, sharex=True, figsize=(10, 8))
+        self._plot_data(self._data, days, values)
+        standardised_data = self._standardised_data()
+        self._plot_data(standardised_data, days, standard)
+        plt.xlabel('Day')
+        values.set_ylabel('Value')
+        standard.set_ylabel('Standardised Value')
         plt.legend()
         plt.show()
+
+    def _plot_data(self, data, days, values):
+        values.axhline(y=0, color='black')
+        values.plot(days, data.temperature, label='Temperature')
+        values.plot(days, data.pollution, label='Pollution')
+        values.plot(days, data.cloud_density, label='Cloud Density')
+        values.plot(days, data.wind, label='Wind Magnitude')
+        values.axvline(x=0, color='r', label='End of stabilisation period')
+
+    def _standardised_data(self):
+        standardised_data = box.Box(temperature=[], cloud_density=[], pollution=[], wind=[])
+        standardised_data.temperature = self._standardise(self._data.temperature)
+        standardised_data.pollution = self._standardise(self._data.pollution)
+        standardised_data.cloud_density = self._standardise(self._data.cloud_density)
+        standardised_data.wind = self._standardise(self._data.wind)
+        return standardised_data
+
+    def _standardise(self, data):
+        average = numpy.average(data)
+        standard_deviation = numpy.std(data)
+        standardised = [(point - average) / standard_deviation for point in data]
+        return standardised
 
 
 def wait_for_exit():
