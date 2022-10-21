@@ -4,28 +4,27 @@ effects:
       "on":
         heat: 1.5
     wind:
-      travel_dissipation: 0.9
-      dissipation_cone: 90
-      dissipation_limiter: 2
-      "on":
-        heat: 0.01
+      travel_dissipation: 0.9 # Naturally occurring reduction of wind
+      dissipation_cone: 90 # The angle at which wind might dissipate into neighbours
+      dissipation_limiter: 2 # The higher, the more the dissipation concentrates in the cells directly in front of the wind
+      "on": # How much of this resource is blown away by wind
         clouds: 0.5
         pollution: 1
     heat:
       "on":
-        ice: 0.4
-        rain: 0.1
+        ice: 0.4 # Higher makes icebergs melt or solidify faster
+        rain: 0.1 # Higher creates a higher threshold for rain to pour, according to temperature
         pollution: 0.01
         cloud_creation: 0.5
         wind: 0.1
-    rain:
+    rain: # Reduction of elements by rain
       "on":
         heat: 1
         pollution: 1
         cloud_reduction: 3
     clouds:
       "on":
-        sun: 1
+        sun: 1 # Sun blockage
     height:
       "on":
         wind: 0.1
