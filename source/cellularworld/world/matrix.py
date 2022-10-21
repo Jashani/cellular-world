@@ -36,6 +36,16 @@ class Matrix:
     def __setitem__(self, key, value):
         raise Exception("Please don't access rows directly :(")
 
+    def apply_to_all(self, method):
+        for row in range(self.height):
+            for column in range(self.width):
+                method(self._matrix[row][column])
+
+    def all_cells(self):
+        for row in range(self.height):
+            for column in range(self.width):
+                yield row, column
+
     def smooth(self, row, column):
         self[row][column] = self._neighbourhood_average(row, column)
 
