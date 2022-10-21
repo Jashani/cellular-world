@@ -26,8 +26,8 @@ class Cell:
         self.pollution_dissipation()
         self.heat_dissipation()
         self.cool_tall_places()
+        self.future_state.do_cycle(self.state)
         self.future_biome.do_cycle()
-        self.future_state.do_cycle()
         self.future_wind.do_cycle()
 
     def commit(self):
