@@ -25,23 +25,20 @@ class Terrain:
         return terrain
 
     def _set_neighbours(self, height_map, terrain):
-        for row in range(height_map.height):
-            for column in range(height_map.width):
-                neighbours = [terrain[neighbour_row][neighbour_column] for neighbour_row, neighbour_column in
-                              terrain.neighbour_coordinates(row, column)]
-                terrain[row][column].neighbours = neighbours
+        for row, column in height_map.all_cells():
+            neighbours = [terrain[neighbour_row][neighbour_column] for neighbour_row, neighbour_column in
+                          terrain.neighbour_coordinates(row, column)]
+            terrain[row][column].neighbours = neighbours
 
     def _create_cells(self, height_map, terrain):
-        for row in range(height_map.height):
-            for column in range(height_map.width):
-                height = height_map[row][column]
-                biome = self._biome(height)
-                terrain[row][column] = cell.Cell(biome, height)
+        for row, column in height_map.all_cells():
+            height = height_map[row][column]
+            biome = self._biome(height)
+            terrain[row][column] = cell.Cell(biome, height)
 
     def _descretify(self, height_map):
-        for row in range(height_map.height):
-            for column in range(height_map.width):
-                height_map[row][column] = round(height_map[row][column])
+        for row, column in height_map.all_cells():
+            height_map[row][column] = round(height_map[row][column])
 
     def _smooth_edges(self, height_map):
         for row in self._edges(height_map.height):

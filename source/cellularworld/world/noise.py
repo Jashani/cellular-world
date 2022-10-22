@@ -22,10 +22,9 @@ class Noise:
     @classmethod
     def _interpolate(cls, noise_map, range_start, range_end):
         noise_range = cls._range(noise_map)
-        for row in range(noise_map.height):
-            for column in range(noise_map.width):
-                point_value = noise_map[row][column]
-                noise_map[row][column] = cls._linear_interpolation(*noise_range, range_start, range_end, point_value)
+        for row, column in noise_map.all_cells():
+            point_value = noise_map[row][column]
+            noise_map[row][column] = cls._linear_interpolation(*noise_range, range_start, range_end, point_value)
 
     @staticmethod
     def _linear_interpolation(from_start, from_end, to_start, to_end, value):
