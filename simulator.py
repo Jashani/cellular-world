@@ -26,7 +26,7 @@ class Simulator:
         self._text_matrix = None
         self._label_matrix = None
         self._font = tkinter.font.Font(family='Courier New', size=8)
-        self._data = box.Box(temperature=[], cloud_density=[], pollution=[], wind=[])
+        self._data = box.Box(temperature=[], cloud_density=[], wind=[], pollution=[])
 
         self._build_world()
         self._build_text_matrix()
@@ -87,6 +87,7 @@ class Simulator:
             self._append_data()
             self._commit_world()
         print(f"Ran {iterations} iterations.")
+        self._present_results(stabilisation_period)
         self._create_plot(stabilisation_period)
 
     def _append_data(self):
@@ -132,7 +133,6 @@ class Simulator:
         return averages
 
     def _create_plot(self, stabilisation_period):
-        plt.title(f'City effect on pollution: {config.effects.biomes.city.on.pollution}')
         days = [day + 1 - stabilisation_period for day in range(config.world.days + stabilisation_period)]
         figure, (values, standard) = plt.subplots(2, sharex=True, figsize=(10, 8))
         self._plot_data(self._data, days, values)
@@ -141,6 +141,7 @@ class Simulator:
         plt.xlabel('Day')
         values.set_ylabel('Value')
         standard.set_ylabel('Standardised Value')
+        plt.suptitle(f'City effect on pollution: {config.effects.biomes.city.on.pollution}')
         plt.legend()
         plt.show()
 
@@ -165,6 +166,24 @@ class Simulator:
         standard_deviation = numpy.std(data)
         standardised = [(point - average) / standard_deviation for point in data]
         return standardised
+
+    def _present_results(self, stabilisation_period):
+        print("\nFinal results:")
+        self._present_data(self._data)
+        stable_data = box.Box(self._data)
+        for key, value in self._data.items():
+            stable_data[key] = self._data[key][stabilisation_period:]
+        print("\nFinal results for data after stabilisation period:")
+        self._present_data(stable_data)
+
+    def _present_data(self, data):
+        for key, value in data.items():
+            print(f"\t{key}:\n\t\tHighest - {max(value):.2f}\n\t\tLowest - {min(value):.2f}\n\t\t"
+                  f"Average - {float(numpy.average(value)):.2f}\n\t\tStandard deviation - {float(numpy.std(value)):.2f}")
+            if key == 'pollution':
+                continue
+            pollution_correlation = numpy.corrcoef(data.pollution, data[key])[0][1]
+            print(f"\t\tCorrelation with pollution: {pollution_correlation:.2f}")
 
 
 def wait_for_exit():

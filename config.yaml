@@ -56,7 +56,7 @@ thresholds:
 world:
   seed: 3 # Leave empty for random seed
   days: 365
-  stabilisation_period: 150 # Amount of days we let the world stabilise before starting the year
+  stabilisation_period: 200 # Amount of days we let the world stabilise before starting the simulation
   start:
     sea:
       temperature: 6

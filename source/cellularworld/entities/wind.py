@@ -3,7 +3,6 @@ import numpy
 import copy
 from cellularworld.entities import vector_tools
 from cellularworld.config import config
-import random
 
 RELATIVE_DIRECTION_ANGLE_FACTOR = 45
 ZERO_DIRECTION = numpy.array([1., 0.])
