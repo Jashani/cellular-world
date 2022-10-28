@@ -5,7 +5,8 @@ README = 'Cellular World'
 requires = ['numpy',
             'dataclasses',
             'perlin_noise',
-            'pyyaml']
+            'pyyaml',
+            'python-box']
 
 
 def packages(namespace, dir):
